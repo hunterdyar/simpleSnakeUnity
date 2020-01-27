@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour
 {
-   
-    public ContactFilter2D filter2D;
     public GameObject fruitPrefab;
     Vector2 currentDirection;
     BoxCollider2D boxCol;
@@ -23,8 +21,7 @@ public class SnakeMovement : MonoBehaviour
         turn = 0;
         timer = 0;
         currentDirection = Vector2.right;
-        //Start with a fruit.
-        DropNewFruit();
+
     }
 
     // Update is called once per frame
@@ -69,6 +66,8 @@ public class SnakeMovement : MonoBehaviour
     }
     //Returns the transform of what we are overlapping.
     Transform CheckOverlap(){
+        ContactFilter2D filter2D = new ContactFilter2D();
+
         Collider2D[] results = new Collider2D[1];
         boxCol.OverlapCollider(filter2D,results);
         if(results[0] != null){

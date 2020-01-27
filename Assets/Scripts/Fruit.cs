@@ -4,25 +4,25 @@ using UnityEngine;
 
 public class Fruit : MonoBehaviour
 {
-    public ContactFilter2D filter2D;
     private BoxCollider2D boxCol;
     public Vector2Int levelSize;
-    // Start is called before the first frame update
+    void Awake(){
+                boxCol = GetComponent<BoxCollider2D>();
+    }
     void Start()
     {
         if(levelSize == Vector2Int.zero){
             Debug.LogError("Will cause infinite loop");
         }
-        boxCol = GetComponent<BoxCollider2D>();
         MoveToRandomSpot();
     }
     void MoveToRandomSpot(){
         transform.position = GetRandomSpot();
-        Collider2D[] results = new Collider2D[1];
-        boxCol.OverlapCollider(filter2D,results);
-        if(results[0] != null){
-            Debug.Log("picked occupied spot, "+transform.position);
-            //MoveToRandomSpot();
+        ContactFilter2D filter2D = new ContactFilter2D();
+        Collider2D[] results = new Collider2D[5];
+        if(boxCol.OverlapCollider(filter2D,results) > 0){
+                Debug.Log("in occupied spot, "+transform.position);
+                MoveToRandomSpot();
         }
     }
     Vector3 GetRandomSpot(){
