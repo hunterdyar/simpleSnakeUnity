@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour
 {
+    public List<Transform> tailPieces;
+    public List<Vector3> moveHistory;
+
     public GameObject fruitPrefab;
     Vector2 currentDirection;
     BoxCollider2D boxCol;
@@ -18,10 +21,10 @@ public class SnakeMovement : MonoBehaviour
     }
     void Start()
     {
+        moveHistory = new List<Vector3>();
         turn = 0;
         timer = 0;
         currentDirection = Vector2.right;
-
     }
 
     // Update is called once per frame
@@ -35,6 +38,7 @@ public class SnakeMovement : MonoBehaviour
         }
     }
     void Move(){
+        moveHistory.Add(transform.position);
         transform.position = transform.position+new Vector3(currentDirection.x,currentDirection.y,0);
         turn++;
         if(turn%10 == 0){//if the remainder turn divided by 10 is zero. IE if turn is a multiple of 10.
@@ -48,11 +52,16 @@ public class SnakeMovement : MonoBehaviour
             }else if(overlapping.tag == "Fruit"){
                 Debug.Log("New Tail Piece");
                 overlapping.tag = "Tail";
-                Destroy(overlapping.gameObject);
+                tailPieces.Add(overlapping);
+
                 DropNewFruit();
             }
         }
-        
+        //Move The Tail Pieces
+        for(int i = 0;i<tailPieces.Count;i++)
+        {
+            tailPieces[i].position = moveHistory[moveHistory.Count - 1 - i]; 
+        }
     }
     void CheckInput(){
         if(Input.GetKeyDown(KeyCode.DownArrow) && currentDirection != Vector2.up){
