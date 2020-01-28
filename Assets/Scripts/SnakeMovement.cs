@@ -47,7 +47,8 @@ public class SnakeMovement : MonoBehaviour
                 Death();
             }else if(overlapping.tag == "Fruit"){
                 Debug.Log("New Tail Piece");
-                Destroy(overlapping.gameObject);
+                overlapping.tag = "Tail";
+                tailPieces.Add(overlapping);
                 DropNewFruit();
             }
         }
