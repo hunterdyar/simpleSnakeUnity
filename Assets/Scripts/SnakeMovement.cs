@@ -5,12 +5,14 @@ using UnityEngine;
 public class SnakeMovement : MonoBehaviour
 {
     public GameObject fruitPrefab;//Object to spawn.
+    public List<Transform> tailPieces;
+    public List<Vector3> moveHistory;
     Vector2 currentDirection;//movement control.
     BoxCollider2D boxCol;
     //timer used to move every x seconds
     float timer;
     public float moveInterval; //as this decreases, the game goes faster.
-    int turn;//increases by one every move.
+    public int turn;//increases by one every move.
     void Awake()
     {
         boxCol = GetComponent<BoxCollider2D>();
@@ -18,6 +20,8 @@ public class SnakeMovement : MonoBehaviour
     void Start()
     {
         //Initiate the game.
+        tailPieces = new List<Transform>();
+        moveHistory = new List<Vector3>();
         turn = 0;
         timer = 0;
         currentDirection = Vector2.up;//Initial direction to travel.
@@ -36,7 +40,7 @@ public class SnakeMovement : MonoBehaviour
     void Move()
     {
         transform.position = transform.position+new Vector3(currentDirection.x,currentDirection.y,0);
-        turn++;
+        moveHistory.Add(transform.position);
         //Modulo operator! FANCY. https://www.youtube.com/watch?v=r5Iy3v1co0A
         if(turn%10 == 0)//if the remainder of 'turn' divided by 10 is zero. IE if turn is a multiple of 10.
         {
@@ -52,10 +56,21 @@ public class SnakeMovement : MonoBehaviour
             }else if(overlapping.tag == "Fruit")
             {
                 Debug.Log("New Tail Piece");
-                Destroy(overlapping.gameObject);
+                overlapping.tag = "Tail";
+                tailPieces.Add(overlapping);
                 DropNewFruit();
             }
         }
+
+        //Move all of the tail pieces.
+        for(int i = 0;i<tailPieces.Count; i++)
+        {
+            //loop through every tail piece.
+            //i is the index.
+            tailPieces[i].position = moveHistory[turn - i - 1];
+        }
+        turn++;
+
     }//end move
     void CheckInput()
     {
@@ -90,5 +105,10 @@ public class SnakeMovement : MonoBehaviour
     void Death()
     {
         this.enabled = false;//turning off this script turns off movement.
+        GetComponent<SpriteRenderer>().color = Color.red;
+        foreach(Transform t in tailPieces)
+        {
+            t.GetComponent<SpriteRenderer>().color = Color.red;
+        }
     }
 }
