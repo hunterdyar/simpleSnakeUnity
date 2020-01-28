@@ -4,24 +4,23 @@ using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour
 {
-    public GameObject fruitPrefab;
-    Vector2 currentDirection;
+    public GameObject fruitPrefab;//Object to spawn.
+    Vector2 currentDirection;//movement control.
     BoxCollider2D boxCol;
-
-    //timer used to move ever x seconds
+    //timer used to move every x seconds
     float timer;
     public float moveInterval; //as this decreases, the game goes faster.
-
-    int turn;
-    void Awake(){
+    int turn;//increases by one every move.
+    void Awake()
+    {
         boxCol = GetComponent<BoxCollider2D>();
     }
     void Start()
     {
+        //Initiate the game.
         turn = 0;
         timer = 0;
-        currentDirection = Vector2.right;
-
+        currentDirection = Vector2.up;//Initial direction to travel.
     }
 
     // Update is called once per frame
@@ -34,26 +33,32 @@ public class SnakeMovement : MonoBehaviour
             timer = 0;
         }
     }
-    void Move(){
+    void Move()
+    {
         transform.position = transform.position+new Vector3(currentDirection.x,currentDirection.y,0);
         turn++;
-        if(turn%10 == 0){//if the remainder turn divided by 10 is zero. IE if turn is a multiple of 10.
+        //Modulo operator! FANCY. https://www.youtube.com/watch?v=r5Iy3v1co0A
+        if(turn%10 == 0)//if the remainder of 'turn' divided by 10 is zero. IE if turn is a multiple of 10.
+        {
             moveInterval = moveInterval - moveInterval*0.1f;//10% faster!
         }
-        if(CheckOverlap() != null){
+        if(CheckOverlap() != null)
+        {
             Transform overlapping = CheckOverlap();
-            if(overlapping.tag == "Tail"){
+            if(overlapping.tag == "Tail")
+            {
                 Debug.Log("You Lose");
                 Death();
-            }else if(overlapping.tag == "Fruit"){
+            }else if(overlapping.tag == "Fruit")
+            {
                 Debug.Log("New Tail Piece");
                 Destroy(overlapping.gameObject);
                 DropNewFruit();
             }
         }
-        
-    }
-    void CheckInput(){
+    }//end move
+    void CheckInput()
+    {
         if(Input.GetKeyDown(KeyCode.DownArrow) && currentDirection != Vector2.up){
             currentDirection = Vector2.down;
         }else if(Input.GetKeyDown(KeyCode.UpArrow) && currentDirection != Vector2.down){
@@ -65,7 +70,8 @@ public class SnakeMovement : MonoBehaviour
         }
     }
     //Returns the transform of what we are overlapping.
-    Transform CheckOverlap(){
+    Transform CheckOverlap()
+    {
         ContactFilter2D filter2D = new ContactFilter2D();
 
         Collider2D[] results = new Collider2D[1];
@@ -76,11 +82,13 @@ public class SnakeMovement : MonoBehaviour
             return null;
         }
     }
-    //Creates a new fruit. Does not move it into position.
-    void DropNewFruit(){
+    //Creates a new fruit. Does not move it into a random position. Fruit moves itself.
+    void DropNewFruit()
+    {
         GameObject.Instantiate(fruitPrefab,Vector3.zero,Quaternion.identity);
     }
-    void Death(){
-        moveInterval = Mathf.Infinity;
+    void Death()
+    {
+        this.enabled = false;//turning off this script turns off movement.
     }
 }
