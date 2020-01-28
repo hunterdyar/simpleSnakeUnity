@@ -18,12 +18,12 @@ public class Fruit : MonoBehaviour
     }
     void MoveToRandomSpot(){
         transform.position = GetRandomSpot();
-        ContactFilter2D filter2D = new ContactFilter2D();
-        Collider2D[] results = new Collider2D[5];
-        if(boxCol.OverlapCollider(filter2D,results) > 0){
-                Debug.Log("in occupied spot, "+transform.position);
-                MoveToRandomSpot();
-        }
+        // ContactFilter2D filter2D = new ContactFilter2D();
+        // Collider2D[] results = new Collider2D[5];
+        // if(boxCol.OverlapCollider(filter2D,results) > 0){
+        //         Debug.Log("in occupied spot?"+transform.position);
+        //         MoveToRandomSpot();
+        // }
     }
     Vector3 GetRandomSpot(){
         int randomX = Random.Range(-(int)levelSize.x/2,(int)levelSize.x/2);
